@@ -4,7 +4,58 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SAARTHI IAS - Mock Test Portal</title>
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #e3f2fd;
+    }
+    header {
+      background-color: #0d47a1;
+      color: white;
+      padding: 15px 0;
+      text-align: center;
+    }
+    main {
+      max-width: 900px;
+      margin: 20px auto;
+      background-color: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1, h2 {
+      margin: 10px 0;
+    }
+    #timer {
+      font-size: 18px;
+      font-weight: bold;
+      color: #d32f2f;
+      text-align: right;
+      margin-bottom: 10px;
+    }
+    .question { margin-bottom: 20px; }
+    .option { display: block; margin: 8px 0; }
+    #navigation { margin-top: 20px; text-align: center; }
+    #navigation button {
+      margin: 0 10px;
+      padding: 8px 16px;
+      font-size: 16px;
+    }
+    #question-nav {
+      margin-top: 20px;
+      text-align: center;
+    }
+    #question-nav button {
+      margin: 4px;
+      padding: 6px 10px;
+      font-size: 14px;
+    }
+    .correct { color: green; }
+    .incorrect { color: red; }
+    .explanation { font-style: italic; color: #555; }
+  </style>
 </head>
 <body>
   <header>
@@ -32,6 +83,140 @@
     <div id="results" style="display: none;"></div>
   </main>
 
-  <script src="script.js"></script>
+  <script>
+    const questions = [
+      {
+        question: "What is the capital of India?",
+        options: ["Mumbai", "New Delhi", "Kolkata", "Chennai"],
+        correct: 1,
+        explanation: "New Delhi is the capital of India."
+      },
+      {
+        question: "Which element has the chemical symbol O?",
+        options: ["Oxygen", "Gold", "Osmium", "Oganesson"],
+        correct: 0,
+        explanation: "Oxygen has the chemical symbol O."
+      }
+    ];
+
+    let currentIndex = 0;
+    let selectedAnswers = {};
+    let timer;
+    let testDuration = 2 * 60 * 60;
+
+    window.onload = function () {
+      document.getElementById("startBtn").addEventListener("click", startTest);
+    };
+
+    function startTest() {
+      document.getElementById("start-container").style.display = "none";
+      document.getElementById("test-container").style.display = "block";
+      renderQuestion();
+      renderQuestionButtons();
+      startTimer();
+    }
+
+    function renderQuestion() {
+      const container = document.getElementById("question-container");
+      const q = questions[currentIndex];
+      container.innerHTML = \`
+        <div class="question">
+          <p><strong>Q\${currentIndex + 1}: \${q.question}</strong></p>
+          \${q.options.map((opt, i) => \`
+            <label class="option">
+              <input type="radio" name="q\${currentIndex}" value="\${i}" \${selectedAnswers[currentIndex] === i ? "checked" : ""} />
+              \${opt}
+            </label>\`).join("")}
+        </div>
+      \`;
+
+      document.querySelectorAll(\`input[name="q\${currentIndex}"]\`).forEach(input => {
+        input.addEventListener("change", e => {
+          selectedAnswers[currentIndex] = parseInt(e.target.value);
+        });
+      });
+    }
+
+    function renderQuestionButtons() {
+      const nav = document.getElementById("question-nav");
+      nav.innerHTML = "";
+      questions.forEach((_, idx) => {
+        const btn = document.createElement("button");
+        btn.innerText = idx + 1;
+        btn.onclick = () => {
+          currentIndex = idx;
+          renderQuestion();
+        };
+        nav.appendChild(btn);
+      });
+
+      document.getElementById("prevBtn").onclick = () => {
+        if (currentIndex > 0) {
+          currentIndex--;
+          renderQuestion();
+        }
+      };
+
+      document.getElementById("nextBtn").onclick = () => {
+        if (currentIndex < questions.length - 1) {
+          currentIndex++;
+          renderQuestion();
+        }
+      };
+
+      document.getElementById("submitBtn").onclick = submitTest;
+      window.onblur = () => {
+        alert("Tab switch detected. Submitting test.");
+        submitTest();
+      };
+    }
+
+    function startTimer() {
+      const timerDiv = document.getElementById("timer");
+      timer = setInterval(() => {
+        if (testDuration <= 0) {
+          clearInterval(timer);
+          alert("Time's up!");
+          submitTest();
+          return;
+        }
+        const h = String(Math.floor(testDuration / 3600)).padStart(2, '0');
+        const m = String(Math.floor((testDuration % 3600) / 60)).padStart(2, '0');
+        const s = String(testDuration % 60).padStart(2, '0');
+        timerDiv.innerText = \`Time Left: \${h}:\${m}:\${s}\`;
+        testDuration--;
+      }, 1000);
+    }
+
+    function submitTest() {
+      clearInterval(timer);
+      document.getElementById("test-container").style.display = "none";
+      const resultDiv = document.getElementById("results");
+      resultDiv.style.display = "block";
+      let correctCount = 0;
+
+      questions.forEach((q, idx) => {
+        const selected = selectedAnswers[idx];
+        const correct = q.correct;
+
+        const result = document.createElement("div");
+        result.classList.add("question");
+        result.innerHTML = \`
+          <p><strong>Q\${idx + 1}: \${q.question}</strong></p>
+          <p>Your Answer: \${selected !== undefined ? q.options[selected] : "<em>Not Answered</em>"}</p>
+          <p>Correct Answer: \${q.options[correct]}</p>
+          <p class="\${selected === correct ? "correct" : "incorrect"}">\${selected === correct ? "✔ Correct" : "✘ Incorrect"}</p>
+          <p class="explanation">Explanation: \${q.explanation}</p>
+        \`;
+        resultDiv.appendChild(result);
+
+        if (selected === correct) correctCount++;
+      });
+
+      const summary = document.createElement("h2");
+      summary.innerText = \`Your Score: \${correctCount} / \${questions.length}\`;
+      resultDiv.prepend(summary);
+    }
+  </script>
 </body>
 </html>
