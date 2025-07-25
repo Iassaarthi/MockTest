@@ -3,18 +3,34 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Mock Test Portal</title>
+  <title>SAARTHI IAS Mock Test</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="container">
-    <h1>Mock Test</h1>
-    <div id="timer">Time Left: 02:00:00</div>
-    <form id="quizForm"></form>
-    <button id="submitBtn">Submit Test</button>
-  </div>
+  <header>
+    <h1>SAARTHI IAS - Mock Test Portal</h1>
+  </header>
 
-  <div id="results" style="display: none;"></div>
+  <main>
+    <div id="start-container">
+      <h2>Welcome to the Mock Test</h2>
+      <p>Click below to begin. You will have 2 hours to complete the test. Tab switching will auto-submit the exam.</p>
+      <button id="startBtn">Start Test</button>
+    </div>
+
+    <div id="test-container" style="display: none;">
+      <div id="timer">Time Left: 02:00:00</div>
+      <div id="question-container"></div>
+      <div id="navigation">
+        <button id="prevBtn">Previous</button>
+        <button id="nextBtn">Next</button>
+        <button id="submitBtn">Submit Test</button>
+      </div>
+      <div id="question-nav"></div>
+    </div>
+
+    <div id="results" style="display: none;"></div>
+  </main>
 
   <script src="script.js"></script>
 </body>
