@@ -1,14 +1,14 @@
 [
   {
-    "question": "What is the capital of France?",
-    "options": ["Berlin", "Madrid", "Paris", "Rome"],
-    "correct": 2,
-    "explanation": "Paris is the capital of France."
+    "question": "What is the capital of India?",
+    "options": ["Mumbai", "New Delhi", "Kolkata", "Chennai"],
+    "correct": 1,
+    "explanation": "New Delhi is the capital of India."
   },
   {
-    "question": "Which gas is essential for photosynthesis?",
-    "options": ["Oxygen", "Carbon Dioxide", "Nitrogen", "Hydrogen"],
-    "correct": 1,
-    "explanation": "Carbon Dioxide is absorbed by plants during photosynthesis."
+    "question": "Which element has the chemical symbol O?",
+    "options": ["Oxygen", "Gold", "Osmium", "Oganesson"],
+    "correct": 0,
+    "explanation": "Oxygen has the chemical symbol O."
   }
 ]
